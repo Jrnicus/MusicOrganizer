@@ -4,8 +4,8 @@ import java.util.ArrayList;
  * A class to hold details of audio tracks.
  * Individual tracks may be played.
  * 
- * @author David J. Barnes and Michael Kölling
- * @version 2016.02.29
+ * @Steve Cate
+ * @10/1/19
  */
 public class MusicOrganizer
 {
@@ -54,6 +54,7 @@ public class MusicOrganizer
     public void playTrack(int index)
     {
         if(indexValid(index)) {
+            player.stop();  // added this because the player would play multiple songs at the same time and was annoying
             Track track = tracks.get(index);
             player.startPlaying(track.getFilename());
             System.out.println("Now playing: " + track.getArtist() + " - " + track.getTitle());
@@ -123,6 +124,7 @@ public class MusicOrganizer
     public void playFirst()
     {
         if(tracks.size() > 0) {
+            player.stop();  // to make sure two songs dont play at the same time
             player.startPlaying(tracks.get(0).getFilename());
         }
     }
