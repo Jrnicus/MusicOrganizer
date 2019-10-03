@@ -1,5 +1,6 @@
 import java.util.ArrayList;
-
+import java.util.Random;  // need this to generate a random number for shuffle and play random
+import java.util.Iterator; // needed to make sure all songs play once in the shuffle method
 /**
  * A class to hold details of audio tracks.
  * Individual tracks may be played.
@@ -15,15 +16,20 @@ public class MusicOrganizer
     private MusicPlayer player;
     // A reader that can read music files and load them as tracks.
     private TrackReader reader;
+    // For generating random number for playRandom and shuffle
+    private Random rand;
+    // For making a copy of the track list every time we want to shuffle
+    private ArrayList<Track> shuffle;
 
     /**
      * Create a MusicOrganizer
      */
     public MusicOrganizer()
     {
-        tracks = new ArrayList<>();
+        tracks = new ArrayList<Track>();
         player = new MusicPlayer();
         reader = new TrackReader();
+        rand = new Random();
         readLibrary("../audio");
         System.out.println("Music library loaded. " + getNumberOfTracks() + " tracks.");
         System.out.println();
@@ -172,4 +178,35 @@ public class MusicOrganizer
             addTrack(track);
         }
     }
+    
+    /**
+     * This method will play a random song from the collection
+     */
+    public void playRandom()
+    {
+        player.stop();
+        Track track = tracks.get(rand.nextInt(tracks.size()));
+        player.startPlaying(track.getFilename());
+        System.out.println("Now playing: " + track.getArtist() + " - " + track.getTitle());
+    }
+    
+    /**
+     * This metiod will play through every song in you library once in a random order
+     */
+    public synchronized void shuffle()
+    {
+        player.stop();
+        shuffle = new ArrayList<Track>(tracks);
+        
+        while(shuffle.size() > 0)
+        {
+            Track randomTrack = shuffle.get(rand.nextInt(shuffle.size()));
+            System.out.println("Now playing: " + randomTrack.getArtist() + " - " + randomTrack.getTitle());
+            
+            // startPlaying would break and not know when to start playing the next song so I used playSample instead
+            player.playSample(randomTrack.getFilename());
+
+            shuffle.remove(randomTrack);
+        }
+    }   
 }
